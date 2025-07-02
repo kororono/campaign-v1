@@ -75,7 +75,12 @@
                     </blockquote>
                 </div>
                 <div class="hidden md:block">
-                    <img src="https://raw.githubusercontent.com/kororono/campaign-v1/main/assets/images/headshot.webp" alt="Candidate Portrait" class="h-full w-full object-cover" onerror="this.onerror=null;this.src='https://placehold.co/600x600/006A4E/FFFFFF?text=Brandon+Rono';">
+                    <img src="https://raw.githubusercontent.com/kororono/campaign-v1/main/assets/images/headshot.webp" 
+                         alt="Candidate Portrait" 
+                         class="h-full w-full object-cover"
+                         onerror="this.onerror=null; this.src='https://raw.githubusercontent.com/kororono/campaign-v1/19e039ea40a03ae0d8189e60eec5d10fa6d1f6cb/assets/images/headshot.webp';"
+                         onload="console.log('Image loaded successfully')"
+                         style="background: #006A4E;">
                 </div>
             </div>
         </header>
@@ -193,12 +198,16 @@
         async function fetchAndUpdateStats() {
             try {
                 console.log('Fetching data from API...');
-                const res = await fetch(API_URL + '?method=GET');
+                const res = await fetch(API_URL);
+                
                 if (!res.ok) {
                     throw new Error(`API responded with status: ${res.status}`);
                 }
+                
                 const data = await res.json();
-                console.log('API Response:', data);
+                console.log('Raw API Response:', data);
+                console.log('Type of response:', typeof data);
+                console.log('Is array:', Array.isArray(data));
 
                 // Handle different possible data structures
                 let processedData = [];
@@ -208,27 +217,68 @@
                     processedData = data.data;
                 } else if (data.values && Array.isArray(data.values)) {
                     processedData = data.values;
+                } else {
+                    console.log('Unexpected data structure:', data);
+                    processedData = [];
                 }
 
                 console.log('Processed data:', processedData);
+                console.log('Number of rows:', processedData.length);
 
-                // Filter for valid donations - look for both "donation" and "in" direction
+                if (processedData.length > 0) {
+                    console.log('Sample row:', processedData[0]);
+                    console.log('Available fields:', Object.keys(processedData[0] || {}));
+                }
+
+                // More flexible filtering - try multiple field combinations
                 const validTxns = processedData.filter(row => {
-                    const hasValidAmount = !isNaN(parseFloat(row.amount)) && parseFloat(row.amount) > 0;
-                    const isValidType = row.transaction_type === "donation" || row.direction === "in";
-                    const isOnChain = row.onChain?.toString().toLowerCase() === "true";
+                    console.log('Checking row:', row);
                     
-                    return hasValidAmount && isValidType && isOnChain;
+                    // Check if amount exists and is valid
+                    const amount = parseFloat(row.amount);
+                    const hasValidAmount = !isNaN(amount) && amount > 0;
+                    console.log('Amount check:', row.amount, '->', amount, 'Valid:', hasValidAmount);
+                    
+                    // Check transaction type or direction
+                    const isValidType = (
+                        row.transaction_type === "donation" || 
+                        row.direction === "in" ||
+                        (row.transaction_type && row.transaction_type.toLowerCase().includes('donation')) ||
+                        (row.direction && row.direction.toLowerCase() === 'in')
+                    );
+                    console.log('Type check:', row.transaction_type, row.direction, 'Valid:', isValidType);
+                    
+                    // Check if onChain (more flexible)
+                    let isOnChain = false;
+                    if (row.onChain !== undefined && row.onChain !== null) {
+                        const onChainValue = row.onChain.toString().toLowerCase();
+                        isOnChain = onChainValue === 'true' || onChainValue === '1' || onChainValue === 'yes';
+                    }
+                    console.log('OnChain check:', row.onChain, 'Valid:', isOnChain);
+                    
+                    const isValid = hasValidAmount && isValidType && isOnChain;
+                    console.log('Row valid:', isValid);
+                    
+                    return isValid;
                 });
 
-                console.log('Valid transactions:', validTxns);
+                console.log('Valid transactions found:', validTxns);
+                console.log('Number of valid transactions:', validTxns.length);
 
                 const newCount = validTxns.length;
-                const newAmount = validTxns.reduce((sum, row) => sum + parseFloat(row.amount), 0);
+                const newAmount = validTxns.reduce((sum, row) => {
+                    const amount = parseFloat(row.amount) || 0;
+                    console.log('Adding amount:', amount);
+                    return sum + amount;
+                }, 0);
 
-                console.log(`New count: ${newCount}, New amount: ${newAmount}`);
+                console.log(`Final counts - Transactions: ${newCount}, Total Amount: ${newAmount}`);
 
-                // Update counters with animation
+                // Always update the display, even if values are 0
+                document.getElementById('txnCount').textContent = newCount.toLocaleString();
+                document.getElementById('totalAmount').textContent = newAmount.toLocaleString();
+
+                // Animate if values changed
                 if (newCount !== previousCount) {
                     animateCounter("txnCount", previousCount, newCount);
                     previousCount = newCount;
@@ -239,21 +289,14 @@
                     previousAmount = newAmount;
                 }
 
-                // Show success indicator (optional)
                 console.log('Stats updated successfully');
 
             } catch (err) {
                 console.error("Failed to fetch donation data:", err);
-                // Show error in a user-friendly way
-                const txnEl = document.getElementById('txnCount');
-                const amountEl = document.getElementById('totalAmount');
                 
-                if (txnEl.textContent === '0') {
-                    txnEl.textContent = '--';
-                }
-                if (amountEl.textContent === '0') {
-                    amountEl.textContent = '--';
-                }
+                // Show error state
+                document.getElementById('txnCount').textContent = 'Error';
+                document.getElementById('totalAmount').textContent = 'Error';
             }
         }
 
