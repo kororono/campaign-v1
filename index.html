@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Campaign Transparency</title>
+  <style>
+    /* CSS Reset */
+    body,
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6,
+    p,
+    ul,
+    ol,
+    li,
+    form,
+    input,
+    textarea,
+    button {
+      margin: 0;
+      padding: 0;
+      border: 0;
+      font-size: 100%;
+      font: inherit;
+      vertical-align: baseline;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: sans-serif;
+      line-height: 1.6;
+      background: linear-gradient(to bottom, #006600, #FFFFFF);
+      color: #333;
+      overflow-x: hidden;
+    }
+
+    /* Kenyan Flag Colors */
+    :root {
+      --green: #006600;
+      --white: #FFFFFF;
+      --red: #BB0000;
+      --black: #000000;
+    }
+
+    /* Layout */
+    .container {
+      max-width: 1200px;
+      margin: 20px auto;
+      padding: 20px;
+    }
+
+    /* Hero Section */
+    .hero {
+      display: grid;
+      grid-template-columns: 40% 60%;
+      gap: 20px;
+      align-items: center;
+      padding: 20px;
+      background-color: rgba(255, 255, 255, 0.8);
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      border-bottom: 5px solid var(--red);
+    }
+
+    .hero-image {
+      width: 100%;
+      height: auto;
+      aspect-ratio: 16 / 9;
+      object-fit: cover;
+    }
+
+    .hero-content {
+      padding: 20px;
+    }
+
+    .hero-content h1 {
+      font-size: 2.5em;
+      color: var(--green);
+      margin-bottom: 10px;
+    }
+
+    .hero-content p {
+      font-size: 1.2em;
+      color: var(--black);
+      font-style: italic;
+    }
+
+    /* Donation Tracker */
+    .donation-tracker {
+      display: flex;
+      justify-content: space-around;
+      padding: 30px;
+      background-color: var(--black);
+      color: var(--white);
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    }
+
+    .donation-counter {
+      text-align: center;
+    }
+
+    .donation-counter h2 {
+      font-size: 1.8em;
+      margin-bottom: 10px;
+    }
+
+    .donation-counter.in h2 {
+      color: var(--green);
+      text-shadow: 0 0 10px var(--green);
+    }
+
+    .donation-counter.out h2 {
+      color: var(--red);
+      text-shadow: 0 0 10px var(--red);
+    }
+
+    .donation-amount {
+      font-size: 2em;
+      font-weight: bold;
+    }
+
+    /* Verify Donation */
+    .verify-donation {
+      padding: 30px;
+      background-color: rgba(255, 255, 255, 0.8);
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      margin-top: 20px;
+    }
+
+    .verify-donation h2 {
+      font-size: 2em;
+      color: var(--green);
+      margin-bottom: 20px;
+      text-align: center;
+    }
+
+    .verify-form {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 15px;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .form-group label {
+      margin-bottom: 5px;
+      color: var(--black);
+    }
+
+    .form-group input {
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+
+    .verify-button {
+      padding: 12px 20px;
+      background-color: var(--green);
+      color: var(--white);
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    .verify-button:hover {
+      background-color: darken(var(--green), 10%);
+    }
+
+    .result-area {
+      margin-top: 20px;
+      text-align: center;
+      font-size: 1.2em;
+    }
+
+    .result-area.verified {
+      color: var(--green);
+    }
+
+    .result-area.not-found {
+      color: var(--red);
+    }
+
+    /* Footer */
+    footer {
+      text-align: center;
+      padding: 20px;
+      background-color: var(--black);
+      color: var(--white);
+      margin-top: 30px;
+    }
+
+    footer p {
+      font-style: italic;
+      margin-bottom: 10px;
+    }
+
+    footer img {
+      width: 30px;
+      margin-bottom: 10px;
+    }
+
+    /* Responsive Design */
+    @media (max-width: 768px) {
+      .hero {
+        grid-template-columns: 1fr;
+        text-align: center;
+      }
+
+      .hero-image {
+        width: 80%;
+        margin: 0 auto;
+      }
+
+      .donation-tracker {
+        flex-direction: column;
+        align-items: center;
+        gap: 20px;
+      }
+
+      .verify-form {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* Loading Spinner */
+    .loading-spinner {
+      border: 5px solid rgba(0, 0, 0, 0.1);
+      border-top: 5px solid var(--green);
+      border-radius: 50%;
+      width: 50px;
+      height: 50px;
+      animation: spin 1s linear infinite;
+      margin: 20px auto;
+    }
+
+    @keyframes spin {
+      0% {
+        transform: rotate(0deg);
+      }
+
+      100% {
+        transform: rotate(360deg);
+      }
+    }
+
+    /* Utility Classes */
+    .mt-20 {
+      margin-top: 20px;
+    }
+
+    .text-center {
+      text-align: center;
+    }
+
+    /* CountUp.js Styles (if needed) */
+    .countup {
+      display: inline-block;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <!-- Hero Section -->
+    <section class="hero">
+      <img src="https://via.placeholder.com/640x360" alt="Candidate Image" class="hero-image">
+      <!-- Replace with actual image URL -->
+      <div class="hero-content">
+        <h1>Candidate Name</h1>
+        <p>Running for Position</p>
+        <blockquote cite="Unknown">
+          “If you cannot trust your leader with ten shillings, you should not trust them with billions. Every coin, every
+          transaction, every decision – transparent and accountable.”
+        </blockquote>
+      </div>
+    </section>
+
+    <!-- Live Donation Tracker -->
+    <section class="donation-tracker">
+      <div class="donation-counter in">
+        <h2>Total Donations (IN)</h2>
+        <div class="donation-amount" id="total-donations">
+          <span class="countup">0</span>
+        </div>
+      </div>
+      <div class="donation-counter out">
+        <h2>Total Spent (OUT)</h2>
+        <div class="donation-amount" id="total-spent">
+          <span class="countup">0</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Verify Your Donation -->
+    <section class="verify-donation">
+      <h2 class="text-center">Verify Your Donation</h2>
+      <form class="verify-form">
+        <div class="form-group">
+          <label for="date">Date:</label>
+          <input type="date" id="date" name="date">
+        </div>
+        <div class="form-group">
+          <label for="time">Time (±1 hour):</label>
+          <input type="time" id="time" name="time">
+        </div>
+        <div class="form-group">
+          <label for="amount">Amount (KSh):</label>
+          <input type="number" id="amount" name="amount">
+        </div>
+        <button type="button" class="verify-button" onclick="verifyDonation()">Verify</button>
+      </form>
+      <div class="result-area mt-20" id="verification-result">
+        <!-- Result will be displayed here -->
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+      <p>“Every shilling accounted for, every transaction on the blockchain.”</p>
+      <img src="https://upload.wikimedia.org/wikipedia/commons/4/45/Flag_of_Kenya.svg" alt="Kenyan Flag">
+      <!-- Replace with local Kenyan flag image -->
+      <p>Powered by Blockchain Technology</p>
+    </footer>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/countup.js/2.0.4/countUp.min.js"></script>
+  <script>
+    // Function to fetch data from Google Sheets API
+    async function fetchData() {
+      const spreadsheetId = '14_8XqIiW8odyiGAE3Yq-iVs8Z90thRykLISaEhenwZw'; // Replace with your actual spreadsheet ID
+      const url = `https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}/values:batchGet?ranges=Sheet1&majorDimension=ROWS&valueRenderOption=FORMATTED_VALUE&key=YOUR_API_KEY`; // Replace YOUR_API_KEY with your actual Google Sheets API key
+
+      try {
+        const response = await fetch(url);
+        const data = await response.json();
+
+        if (data && data.valueRanges && data.valueRanges.length > 0) {
+          const values = data.valueRanges[0].values;
+          return processData(values);
+        } else {
+          console.error('Error: Unable to fetch data from Google Sheets.');
+          return {
+            totalIn: 0,
+            totalOut: 0,
+            transactions: []
+          };
+        }
+      } catch (error) {
+        console.error('Error fetching data:', error);
+        return {
+          totalIn: 0,
+          totalOut: 0,
+          transactions: []
+        };
+      }
+    }
+
+    // Function to process the fetched data
+    function processData(data) {
+      let totalIn = 0;
+      let totalOut = 0;
+      const transactions = [];
+
+      // Assuming the first row is the header row
+      const headers = data[0];
+
+      for (let i = 1; i < data.length; i++) {
+        const row = data[i];
+        const transaction = {};
+
+        for (let j = 0; j < headers.length; j++) {
+          transaction[headers[j].toLowerCase()] = row[j];
+        }
+
+        if (transaction.direction === 'IN') {
+          totalIn += parseFloat(transaction.amount);
+        } else if (transaction.direction === 'OUT') {
+          totalOut += parseFloat(transaction.amount);
+        }
+
+        transactions.push(transaction);
+      }
+
+      return {
+        totalIn,
+        totalOut,
+        transactions
+      };
+    }
+
+    // Function to animate the counters
+    function animateCounters(totalIn, totalOut) {
+      const options = {
+        duration: 2,
+        easing: 'easeOutExpo',
+        separator: ',',
+      };
+
+      const totalDonationsElem = document.getElementById('total-donations');
+      const totalSpentElem = document.getElementById('total-spent');
+
+      const countUpIn = new CountUp(totalDonationsElem.querySelector('.countup'), 0, totalIn, 2, options.duration, options);
+      const countUpOut = new CountUp(totalSpentElem.querySelector('.countup'), 0, totalOut, 2, options.duration, options);
+
+      if (!countUpIn.error) {
+        countUpIn.start();
+      } else {
+        console.error(countUpIn.error);
+        totalDonationsElem.querySelector('.countup').textContent = totalIn.toLocaleString(); // Fallback
+      }
+
+      if (!countUpOut.error) {
+        countUpOut.start();
+      } else {
+        console.error(countUpOut.error);
+        totalSpentElem.querySelector('.countup').textContent = totalOut.toLocaleString(); // Fallback
+      }
+    }
+
+    // Function to verify a donation
+    function verifyDonation() {
+      const date = document.getElementById('date').value;
+      const time = document.getElementById('time').value;
+      const amount = document.getElementById('amount').value;
+      const verificationResultElem = document.getElementById('verification-result');
+
+      // Fetch data and then verify
+      fetchData().then(({
+        transactions
+      }) => {
+        const matchedTransaction = transactions.find(transaction => {
+          const transactionDate = transaction.date;
+          const transactionTime = transaction.time;
+          const transactionAmount = transaction.amount;
+
+          // Date match
+          if (transactionDate !== date) {
+            return false;
+          }
+
+          // Amount match
+          if (parseFloat(transactionAmount) !== parseFloat(amount)) {
+            return false;
+          }
+
+          // Time match (+/- 1 hour)
+          const inputTime = new Date(`1970-01-01T${time}Z`);
+          const transactionTimeDate = new Date(`1970-01-01T${transactionTime}Z`);
+          const timeDiff = Math.abs(inputTime - transactionTimeDate) / 3600000; // Difference in hours
+
+          if (timeDiff > 1) {
+            return false;
+          }
+
+          return true;
+        });
+
+        if (matchedTransaction && matchedTransaction.onchain === 'TRUE') {
+          verificationResultElem.textContent = '✅ Verified on Blockchain';
+          verificationResultElem.classList.remove('not-found');
+          verificationResultElem.classList.add('verified');
+          verificationResultElem.innerHTML += `<br>Transaction Details: ${JSON.stringify(matchedTransaction)}`;
+        } else {
+          verificationResultElem.textContent = '❌ Not Found';
+          verificationResultElem.classList.remove('verified');
+          verificationResultElem.classList.add('not-found');
+        }
+      });
+    }
+
+    // Function to auto-refresh data every 30 seconds
+    function autoRefreshData() {
+      fetchData().then(({
+        totalIn,
+        totalOut
+      }) => {
+        animateCounters(totalIn, totalOut);
+      });
+    }
+
+    // Initial data load and counter animation
+    fetchData().then(({
+      totalIn,
+      totalOut
+    }) => {
+      animateCounters(totalIn, totalOut);
+    });
+
+    // Set interval for auto-refresh
+    setInterval(autoRefreshData, 30000);
+  </script>
+</body>
+
+</html>
