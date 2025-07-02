@@ -75,12 +75,13 @@
                     </blockquote>
                 </div>
                 <div class="hidden md:block">
-                    <img src="https://raw.githubusercontent.com/kororono/campaign-v1/main/assets/images/headshot.webp" 
+                    <img src="https://raw.githubusercontent.com/kororono/campaign-v1/main/assets/images/headshot.webp?v=2" 
                          alt="Candidate Portrait" 
                          class="h-full w-full object-cover"
-                         onerror="this.onerror=null; this.src='https://raw.githubusercontent.com/kororono/campaign-v1/19e039ea40a03ae0d8189e60eec5d10fa6d1f6cb/assets/images/headshot.webp';"
-                         onload="console.log('Image loaded successfully')"
-                         style="background: #006A4E;">
+                         crossorigin="anonymous"
+                         loading="lazy"
+                         onerror="console.log('Image failed to load:', this.src); this.onerror=null; this.src='https://via.placeholder.com/600x600/006A4E/FFFFFF?text=Brandon+Rono';"
+                         onload="console.log('✅ Image loaded successfully!')">
                 </div>
             </div>
         </header>
