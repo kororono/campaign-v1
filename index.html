@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Campaign Transparency Initiative</title>
+    <title>Campaign Transparency Initiative - Live</title>
     <!-- Tailwind CSS for modern, utility-first styling -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Google Fonts for better typography -->
@@ -35,11 +35,6 @@
             background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23e2e8f0' fill-opacity='0.4'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
         }
 
-        /* Animation for the counters */
-        .countup {
-            transition: all 0.3s ease-in-out;
-        }
-
         /* Custom styles for form inputs for a cleaner look */
         .form-input {
             background-color: #f1f5f9;
@@ -53,7 +48,7 @@
 
         /* Loading spinner animation */
         .loading-spinner {
-            border: 4px solid rgba(255, 255, 255, 0.2);
+            border: 4px solid rgba(0, 0, 0, 0.1);
             border-top-color: var(--brand-green);
             animation: spin 1s linear infinite;
         }
@@ -80,39 +75,30 @@
                     </blockquote>
                 </div>
                 <div class="hidden md:block">
-                    <img src="https://placehold.co/600x600/006A4E/FFFFFF?text=Candidate" alt="Candidate Portrait" class="h-full w-full object-cover">
+                    <img src="https://placehold.co/600x600/006A4E/FFFFFF?text=Candidate" alt="Candidate Portrait" class="h-full w-full object-cover" onerror="this.onerror=null;this.src='https://placehold.co/600x600/006A4E/FFFFFF?text=Image+Error';">
                 </div>
             </div>
         </header>
 
         <!-- Live Donation Tracker -->
         <section class="mb-12">
-            <div class="grid md:grid-cols-3 gap-4 md:gap-8 text-center">
-                <!-- Total Donations (IN) -->
+            <div class="grid md:grid-cols-2 gap-4 md:gap-8 text-center">
+                <!-- Total Transactions -->
                 <div class="bg-white p-6 rounded-2xl shadow-lg border-t-4 border-brand-green">
-                    <h2 class="text-sm font-semibold text-gray-500 uppercase tracking-wider">Total Donations (IN)</h2>
-                    <div class="text-4xl md:text-5xl font-bold text-brand-green my-2">
-                        KSh <span id="total-donations" class="countup">0</span>
+                    <h2 class="text-sm font-semibold text-gray-500 uppercase tracking-wider">Total On-Chain Transactions</h2>
+                    <div class="text-4xl md:text-5xl font-bold text-brand-black my-2">
+                        <span id="txnCount">0</span>
                     </div>
-                    <p class="text-gray-400 text-xs">Live updates every 30 seconds.</p>
+                    <p class="text-gray-400 text-xs">Live updates from the ledger.</p>
                 </div>
 
-                <!-- Net Balance -->
-                <div class="bg-brand-black text-white p-6 rounded-2xl shadow-lg order-first md:order-none">
-                     <h2 class="text-sm font-semibold text-gray-400 uppercase tracking-wider">Campaign Balance</h2>
-                    <div class="text-4xl md:text-5xl font-bold my-2">
-                        KSh <span id="net-balance" class="countup">0</span>
-                    </div>
-                     <p class="text-gray-500 text-xs">IN - OUT = BALANCE</p>
-                </div>
-
-                <!-- Total Spent (OUT) -->
+                <!-- Total Amount -->
                 <div class="bg-white p-6 rounded-2xl shadow-lg border-t-4 border-brand-red">
-                    <h2 class="text-sm font-semibold text-gray-500 uppercase tracking-wider">Total Spent (OUT)</h2>
-                    <div class="text-4xl md:text-5xl font-bold text-brand-red my-2">
-                        KSh <span id="total-spent" class="countup">0</span>
+                    <h2 class="text-sm font-semibold text-gray-500 uppercase tracking-wider">Total Donated Amount</h2>
+                    <div class="text-4xl md:text-5xl font-bold text-brand-black my-2">
+                        KSh <span id="totalAmount">0</span>
                     </div>
-                    <p class="text-gray-400 text-xs">All expenditures publicly recorded.</p>
+                    <p class="text-gray-400 text-xs">Sum of all verified donations.</p>
                 </div>
             </div>
         </section>
@@ -124,7 +110,7 @@
                 <p class="text-gray-600 mt-2">Check the status of your donation by entering the details below.</p>
             </div>
 
-            <form id="verify-form" class="max-w-xl mx-auto grid sm:grid-cols-3 gap-4 items-end">
+            <form id="verify-form" class="max-w-2xl mx-auto grid sm:grid-cols-3 gap-4 items-end">
                 <div class="form-group">
                     <label for="date" class="block text-sm font-medium text-gray-700 mb-1">Date</label>
                     <input type="date" id="date" name="date" class="w-full p-3 rounded-lg form-input border transition">
@@ -142,7 +128,7 @@
                 </button>
             </form>
 
-            <div id="verification-result" class="mt-8 text-center min-h-[80px]">
+            <div id="verifyResult" class="mt-8 text-center min-h-[80px]">
                 <!-- Result will be displayed here -->
             </div>
         </section>
@@ -156,7 +142,7 @@
       <div class="text-center text-[38px] mb-4">🇰🇪</div>
 
       <h2 class="text-2xl font-bold text-gray-900 mb-2">Track & Verify Campaign Donations</h2>
-      <p class="text-gray-600 mb-6">Built for transparency, powered by Ethereum Blockchain. Verify donation integrity with a single click.</p>
+      <p class="text-gray-600 mb-6">Built for transparency, powered by Ethereum Blockchain.</p>
 
       <!-- Optional: small footer note -->
       <p class="mt-6 text-sm text-gray-500">&copy; 2025 Your Campaign. All rights reserved.</p>
@@ -165,178 +151,173 @@
 </footer>
     </div>
 
-    <!-- CountUp.js for animating numbers -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/countup.js/2.0.8/countUp.min.js"></script>
     <script>
-        // --- MOCK DATA & API SIMULATION ---
-        // In a real application, this data would come from a secure backend API, not be stored client-side.
-        // This is for demonstration purposes to make the page interactive.
-        const mockTransactions = [
-            { date: '2025-07-01', time: '09:30', amount: '5000', direction: 'IN', onchain: 'TRUE' },
-            { date: '2025-07-01', time: '14:00', amount: '1200', direction: 'OUT', onchain: 'TRUE' },
-            { date: '2025-07-02', time: '11:15', amount: '100', direction: 'IN', onchain: 'TRUE' },
-            { date: '2025-07-02', time: '18:45', amount: '7500', direction: 'IN', onchain: 'FALSE' },
-            { date: '2025-07-03', time: '16:05', amount: '3000', direction: 'OUT', onchain: 'TRUE' },
-        ];
+        // --- LIVE API & UI LOGIC ---
+        
+        // The URL for your Google Apps Script Web App
+        const API_URL = "https://script.google.com/macros/s/AKfycbz_IK07KP-N8FMTd5YzKQidEaLfDDU5Zlod9xr8ZNgBrsQ5kw_1rD1tYr7TuOny2Df4MA/exec";
+
+        // Store previous values to animate only when data changes
+        let previousCount = 0;
+        let previousAmount = 0;
 
         /**
-         * Simulates fetching data from an API (like Google Sheets).
-         * @returns {Promise<object>} A promise that resolves with totals and transactions.
+         * Animates a number from a start to an end value.
+         * @param {string} id - The ID of the HTML element to update.
+         * @param {number} start - The starting number.
+         * @param {number} end - The ending number.
+         * @param {number} [duration=1500] - The animation duration in milliseconds.
          */
-        async function fetchData() {
-            console.log("Fetching mock data...");
-            // Simulate network delay
-            await new Promise(resolve => setTimeout(resolve, 500)); 
+        function animateCounter(id, start, end, duration = 1500) {
+            const el = document.getElementById(id);
+            if (!el) return;
+
+            const range = end - start;
+            let current = start;
+            const stepTime = 20; // ms
+            const increment = range / (duration / stepTime);
             
-            // This is where you would have your actual fetch call to the Google Sheets API
-            // const response = await fetch(YOUR_API_URL);
-            // const data = await response.json();
-            // return processData(data.valueRanges[0].values);
-
-            return processData(mockTransactions);
-        }
-
-        /**
-         * Processes the raw transaction data to calculate totals.
-         * @param {Array<object>} transactions - The array of transaction objects.
-         * @returns {object} An object containing totalIn, totalOut, and the original transactions.
-         */
-        function processData(transactions) {
-            let totalIn = 0;
-            let totalOut = 0;
-
-            transactions.forEach(transaction => {
-                const amount = parseFloat(transaction.amount);
-                if (isNaN(amount)) return;
-
-                if (transaction.direction === 'IN') {
-                    totalIn += amount;
-                } else if (transaction.direction === 'OUT') {
-                    totalOut += amount;
+            const timer = setInterval(() => {
+                current += increment;
+                if ((increment > 0 && current >= end) || (increment < 0 && current <= end)) {
+                    current = end;
+                    clearInterval(timer);
                 }
-            });
-
-            return { totalIn, totalOut, transactions };
+                el.textContent = Math.floor(current).toLocaleString();
+            }, stepTime);
         }
 
-        // --- UI & ANIMATION LOGIC ---
-
-        let totalDonationsAnim, totalSpentAnim, netBalanceAnim;
-
         /**
-         * Initializes and starts the counter animations.
-         * @param {number} totalIn - The total donations received.
-         * @param {number} totalOut - The total amount spent.
+         * Fetches data from the API and updates the statistics on the page.
          */
-        function animateCounters(totalIn, totalOut) {
-            const options = {
-                duration: 2.5,
-                separator: ',',
-                decimalPlaces: 2,
-            };
+        async function fetchAndUpdateStats() {
+            try {
+                const res = await fetch(API_URL);
+                if (!res.ok) {
+                    throw new Error(`API responded with status: ${res.status}`);
+                }
+                const data = await res.json();
 
-            const totalDonationsElem = document.getElementById('total-donations');
-            const totalSpentElem = document.getElementById('total-spent');
-            const netBalanceElem = document.getElementById('net-balance');
-            const netBalance = totalIn - totalOut;
+                // Filter for valid, on-chain donations
+                const validTxns = data.filter(row =>
+                    row.transaction_type === "donation" &&
+                    row.onChain?.toString().toLowerCase() === "true" &&
+                    !isNaN(parseFloat(row.amount))
+                );
 
-            // Initialize or update the CountUp instances
-            if (!totalDonationsAnim) {
-                totalDonationsAnim = new CountUp(totalDonationsElem, totalIn, options);
-                totalSpentAnim = new CountUp(totalSpentElem, totalOut, options);
-                netBalanceAnim = new CountUp(netBalanceElem, netBalance, options);
-                totalDonationsAnim.start();
-                totalSpentAnim.start();
-                netBalanceAnim.start();
-            } else {
-                totalDonationsAnim.update(totalIn);
-                totalSpentAnim.update(totalOut);
-                netBalanceAnim.update(netBalance);
+                const newCount = validTxns.length;
+                const newAmount = validTxns.reduce((sum, row) => sum + parseFloat(row.amount), 0);
+
+                if (newCount !== previousCount) {
+                    animateCounter("txnCount", previousCount, newCount);
+                    previousCount = newCount;
+                }
+
+                if (newAmount !== previousAmount) {
+                    animateCounter("totalAmount", previousAmount, newAmount);
+                    previousAmount = newAmount;
+                }
+            } catch (err) {
+                console.error("Failed to fetch donation data:", err);
+                // Optionally display an error to the user
+                document.getElementById('txnCount').textContent = 'Error';
+                document.getElementById('totalAmount').textContent = 'Error';
             }
         }
 
         /**
-         * Handles the donation verification form submission.
+         * Verifies a contribution based on user input.
          * @param {Event} event - The form submission event.
          */
-        async function verifyDonation(event) {
-            event.preventDefault(); // Prevent page reload
+        async function verifyContribution(event) {
+            event.preventDefault(); // Prevent page from reloading
             const date = document.getElementById('date').value;
             const time = document.getElementById('time').value;
             const amount = document.getElementById('amount').value;
-            const resultArea = document.getElementById('verification-result');
+            const resultEl = document.getElementById("verifyResult");
 
             if (!date || !time || !amount) {
-                resultArea.innerHTML = `<p class="text-yellow-600 font-semibold">Please fill in all fields to verify.</p>`;
+                resultEl.innerHTML = `<p class="text-yellow-600 font-semibold">Please fill in all fields to verify.</p>`;
                 return;
             }
 
-            // Show a loading spinner
-            resultArea.innerHTML = `<div class="loading-spinner h-12 w-12 mx-auto border-gray-300"></div>`;
+            // Show a loading spinner while fetching
+            resultEl.innerHTML = `<div class="loading-spinner h-12 w-12 mx-auto"></div>`;
 
-            const { transactions } = await fetchData();
-            
-            const matchedTransaction = transactions.find(transaction => {
-                // Simple matching for demonstration. Real-world logic might be more complex.
-                const isDateMatch = transaction.date === date;
-                const isAmountMatch = parseFloat(transaction.amount) === parseFloat(amount);
+            try {
+                const res = await fetch(API_URL);
+                if (!res.ok) throw new Error('Network response was not ok.');
+                const data = await res.json();
+
+                const matchedTransaction = data.find(row => {
+                    // Ensure the row from the API has the necessary data before comparing
+                    if (!row.date || !row.time || !row.amount) {
+                        return false;
+                    }
+
+                    const isDateMatch = row.date === date;
+                    const isAmountMatch = parseFloat(row.amount) === parseFloat(amount);
+                    
+                    // Time matching within a +/- 1 hour window
+                    const inputTime = new Date(`1970-01-01T${time}:00`);
+                    const transactionTime = new Date(`1970-01-01T${row.time}`); // Assumes time is in HH:MM format
+                    const timeDiffHours = Math.abs(inputTime - transactionTime) / 3600000;
+                    const isTimeMatch = timeDiffHours <= 1;
+
+                    return isDateMatch && isAmountMatch && isTimeMatch;
+                });
                 
-                // Time matching within a +/- 1 hour window
-                const inputTime = new Date(`1970-01-01T${time}:00`);
-                const transactionTime = new Date(`1970-01-01T${transaction.time}:00`);
-                const timeDiffHours = Math.abs(inputTime - transactionTime) / 3600000;
-                const isTimeMatch = timeDiffHours <= 1;
-
-                return isDateMatch && isAmountMatch && isTimeMatch;
-            });
-
-            // Display result after a short delay for effect
-            setTimeout(() => {
-                if (matchedTransaction) {
-                    if (matchedTransaction.onchain === 'TRUE') {
-                        resultArea.innerHTML = `
-                            <div class="bg-green-100 text-green-800 p-4 rounded-lg">
-                                <p class="font-bold text-lg">✅ Verified on Blockchain</p>
-                                <p class="text-sm mt-1">A matching transaction was found and confirmed.</p>
-                            </div>
-                        `;
+                // Display result after a short delay for effect
+                setTimeout(() => {
+                    if (matchedTransaction) {
+                        const isOnChain = matchedTransaction.onChain?.toString().toLowerCase() === 'true';
+                        if (isOnChain) {
+                             resultEl.innerHTML = `
+                                <div class="bg-green-100 text-green-800 p-4 rounded-lg transition-all duration-300">
+                                    <p class="font-bold text-lg">✅ Verified On-Chain!</p>
+                                    <p class="text-sm mt-1">A matching transaction was found and confirmed on the ledger.</p>
+                                </div>
+                            `;
+                        } else {
+                            resultEl.innerHTML = `
+                                <div class="bg-yellow-100 text-yellow-800 p-4 rounded-lg transition-all duration-300">
+                                    <p class="font-bold text-lg">⚠️ Transaction Found, Pending Verification</p>
+                                    <p class="text-sm mt-1">A matching transaction was found but is not yet confirmed on-chain.</p>
+                                </div>
+                            `;
+                        }
                     } else {
-                         resultArea.innerHTML = `
-                            <div class="bg-yellow-100 text-yellow-800 p-4 rounded-lg">
-                                <p class="font-bold text-lg">⚠️ Transaction Found, Not On-Chain</p>
-                                <p class="text-sm mt-1">A matching transaction was found but is still pending blockchain verification.</p>
+                        resultEl.innerHTML = `
+                            <div class="bg-red-100 text-red-800 p-4 rounded-lg transition-all duration-300">
+                                <p class="font-bold text-lg">❌ No Matching Contribution Found</p>
+                                <p class="text-sm mt-1">Please double-check the details. It may take a few minutes for new transactions to appear.</p>
                             </div>
                         `;
                     }
-                } else {
-                    resultArea.innerHTML = `
-                        <div class="bg-red-100 text-red-800 p-4 rounded-lg">
-                            <p class="font-bold text-lg">❌ Transaction Not Found</p>
-                            <p class="text-sm mt-1">We could not find a matching transaction. Please double-check the details.</p>
-                        </div>
-                    `;
-                }
-            }, 1000); // 1-second delay
-        }
+                }, 500); // 0.5-second delay
 
-        /**
-         * Function to auto-refresh data periodically.
-         */
-        async function autoRefreshData() {
-            const { totalIn, totalOut } = await fetchData();
-            animateCounters(totalIn, totalOut);
+            } catch (err) {
+                console.error("Verification failed:", err);
+                resultEl.innerHTML = `
+                    <div class="bg-red-100 text-red-800 p-4 rounded-lg">
+                        <p class="font-bold text-lg">Error</p>
+                        <p class="text-sm mt-1">Could not complete verification. Please try again later.</p>
+                    </div>
+                `;
+            }
         }
 
         // --- INITIALIZATION ---
         document.addEventListener('DOMContentLoaded', () => {
+            // Attach event listener to the form
             const verifyForm = document.getElementById('verify-form');
-            verifyForm.addEventListener('submit', verifyDonation);
+            verifyForm.addEventListener('submit', verifyContribution);
 
-            // Initial data load and counter animation
-            autoRefreshData();
-
-            // Set interval for auto-refresh (every 30 seconds)
-            setInterval(autoRefreshData, 30000);
+            // Initial fetch to populate data on page load
+            fetchAndUpdateStats();
+            
+            // Set an interval to refresh the stats every 5 minutes
+            setInterval(fetchAndUpdateStats, 5 * 60 * 1000);
         });
     </script>
 </body>
