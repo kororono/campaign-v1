@@ -88,23 +88,32 @@
 
         <!-- Live Donation Tracker -->
         <section class="mb-12">
-            <div class="grid md:grid-cols-2 gap-4 md:gap-8 text-center">
+            <div class="grid md:grid-cols-3 gap-4 md:gap-6 text-center">
                 <!-- Total Transactions -->
                 <div class="bg-white p-6 rounded-2xl shadow-lg border-t-4 border-brand-green">
                     <h2 class="text-sm font-semibold text-gray-500 uppercase tracking-wider">Total On-Chain Transactions</h2>
-                    <div class="text-4xl md:text-5xl font-bold text-brand-black my-2">
+                    <div class="text-3xl md:text-4xl font-bold text-brand-black my-2">
                         <span id="txnCount">0</span>
                     </div>
-                    <p class="text-gray-400 text-xs">Live updates from the ledger.</p>
+                    <p class="text-gray-400 text-xs">All verified transactions</p>
                 </div>
 
-                <!-- Total Amount -->
-                <div class="bg-white p-6 rounded-2xl shadow-lg border-t-4 border-brand-red">
-                    <h2 class="text-sm font-semibold text-gray-500 uppercase tracking-wider">Total Donated Amount</h2>
-                    <div class="text-4xl md:text-5xl font-bold text-brand-black my-2">
-                        KSh <span id="totalAmount">0</span>
+                <!-- Money IN (Donations) -->
+                <div class="bg-white p-6 rounded-2xl shadow-lg border-t-4 border-green-500">
+                    <h2 class="text-sm font-semibold text-gray-500 uppercase tracking-wider">Donations Received</h2>
+                    <div class="text-3xl md:text-4xl font-bold text-green-600 my-2">
+                        KSh <span id="donationsAmount">0</span>
                     </div>
-                    <p class="text-gray-400 text-xs">Sum of all verified donations.</p>
+                    <p class="text-gray-400 text-xs">Money IN • <span id="donationsCount">0</span> transactions</p>
+                </div>
+
+                <!-- Money OUT (Expenses) -->
+                <div class="bg-white p-6 rounded-2xl shadow-lg border-t-4 border-brand-red">
+                    <h2 class="text-sm font-semibold text-gray-500 uppercase tracking-wider">Campaign Expenses</h2>
+                    <div class="text-3xl md:text-4xl font-bold text-red-600 my-2">
+                        KSh <span id="expensesAmount">0</span>
+                    </div>
+                    <p class="text-gray-400 text-xs">Money OUT • <span id="expensesCount">0</span> transactions</p>
                 </div>
             </div>
         </section>
@@ -164,8 +173,11 @@
         const API_URL = "https://script.google.com/macros/s/AKfycbymKKpg1hihXyX5a8dmpg8xnHPVhetuBnM2v0Ul1jXK4eeDRkga6t-p_6N2hM_5IstDBA/exec";
 
         // Store previous values to animate only when data changes
-        let previousCount = 0;
-        let previousAmount = 0;
+        let previousTotalCount = 0;
+        let previousDonationsCount = 0;
+        let previousDonationsAmount = 0;
+        let previousExpensesCount = 0;
+        let previousExpensesAmount = 0;
 
         /**
          * Animates a number from a start to an end value.
@@ -231,63 +243,71 @@
                     console.log('Available fields:', Object.keys(processedData[0] || {}));
                 }
 
-                // More flexible filtering - try multiple field combinations
-                const validTxns = processedData.filter(row => {
-                    console.log('Checking row:', row);
-                    
-                    // Check if amount exists and is valid
-                    const amount = parseFloat(row.amount);
-                    const hasValidAmount = !isNaN(amount) && amount > 0;
-                    console.log('Amount check:', row.amount, '->', amount, 'Valid:', hasValidAmount);
-                    
-                    // Check transaction type or direction
-                    const isValidType = (
-                        row.transaction_type === "donation" || 
-                        row.direction === "in" ||
-                        (row.transaction_type && row.transaction_type.toLowerCase().includes('donation')) ||
-                        (row.direction && row.direction.toLowerCase() === 'in')
-                    );
-                    console.log('Type check:', row.transaction_type, row.direction, 'Valid:', isValidType);
-                    
-                    // Check if onChain (more flexible)
+                // Filter for all on-chain transactions
+                const allOnChainTxns = processedData.filter(row => {
+                    const hasValidAmount = !isNaN(parseFloat(row.amount)) && parseFloat(row.amount) > 0;
                     let isOnChain = false;
                     if (row.onChain !== undefined && row.onChain !== null) {
                         const onChainValue = row.onChain.toString().toLowerCase();
                         isOnChain = onChainValue === 'true' || onChainValue === '1' || onChainValue === 'yes';
                     }
-                    console.log('OnChain check:', row.onChain, 'Valid:', isOnChain);
-                    
-                    const isValid = hasValidAmount && isValidType && isOnChain;
-                    console.log('Row valid:', isValid);
-                    
-                    return isValid;
+                    return hasValidAmount && isOnChain;
                 });
 
-                console.log('Valid transactions found:', validTxns);
-                console.log('Number of valid transactions:', validTxns.length);
+                // Filter for donations (direction IN)
+                const donationTxns = allOnChainTxns.filter(row => {
+                    return row.direction === "IN" || row.direction === "in";
+                });
 
-                const newCount = validTxns.length;
-                const newAmount = validTxns.reduce((sum, row) => {
-                    const amount = parseFloat(row.amount) || 0;
-                    console.log('Adding amount:', amount);
-                    return sum + amount;
-                }, 0);
+                // Filter for expenses (direction OUT)
+                const expenseTxns = allOnChainTxns.filter(row => {
+                    return row.direction === "OUT" || row.direction === "out";
+                });
 
-                console.log(`Final counts - Transactions: ${newCount}, Total Amount: ${newAmount}`);
+                console.log('All on-chain transactions:', allOnChainTxns.length);
+                console.log('Donation transactions (IN):', donationTxns);
+                console.log('Expense transactions (OUT):', expenseTxns);
 
-                // Always update the display, even if values are 0
-                document.getElementById('txnCount').textContent = newCount.toLocaleString();
-                document.getElementById('totalAmount').textContent = newAmount.toLocaleString();
+                // Calculate totals
+                const totalCount = allOnChainTxns.length;
+                const donationsCount = donationTxns.length;
+                const donationsAmount = donationTxns.reduce((sum, row) => sum + parseFloat(row.amount), 0);
+                const expensesCount = expenseTxns.length;
+                const expensesAmount = expenseTxns.reduce((sum, row) => sum + parseFloat(row.amount), 0);
 
-                // Animate if values changed
-                if (newCount !== previousCount) {
-                    animateCounter("txnCount", previousCount, newCount);
-                    previousCount = newCount;
+                console.log(`Totals - All: ${totalCount}, Donations: ${donationsCount} (KSh ${donationsAmount}), Expenses: ${expensesCount} (KSh ${expensesAmount})`);
+
+                // Update displays
+                document.getElementById('txnCount').textContent = totalCount.toLocaleString();
+                document.getElementById('donationsCount').textContent = donationsCount.toLocaleString();
+                document.getElementById('donationsAmount').textContent = donationsAmount.toLocaleString();
+                document.getElementById('expensesCount').textContent = expensesCount.toLocaleString();
+                document.getElementById('expensesAmount').textContent = expensesAmount.toLocaleString();
+
+                // Animate changes
+                if (totalCount !== previousTotalCount) {
+                    animateCounter("txnCount", previousTotalCount, totalCount);
+                    previousTotalCount = totalCount;
                 }
 
-                if (newAmount !== previousAmount) {
-                    animateCounter("totalAmount", previousAmount, newAmount);
-                    previousAmount = newAmount;
+                if (donationsCount !== previousDonationsCount) {
+                    animateCounter("donationsCount", previousDonationsCount, donationsCount);
+                    previousDonationsCount = donationsCount;
+                }
+
+                if (donationsAmount !== previousDonationsAmount) {
+                    animateCounter("donationsAmount", previousDonationsAmount, donationsAmount);
+                    previousDonationsAmount = donationsAmount;
+                }
+
+                if (expensesCount !== previousExpensesCount) {
+                    animateCounter("expensesCount", previousExpensesCount, expensesCount);
+                    previousExpensesCount = expensesCount;
+                }
+
+                if (expensesAmount !== previousExpensesAmount) {
+                    animateCounter("expensesAmount", previousExpensesAmount, expensesAmount);
+                    previousExpensesAmount = expensesAmount;
                 }
 
                 console.log('Stats updated successfully');
@@ -295,9 +315,12 @@
             } catch (err) {
                 console.error("Failed to fetch donation data:", err);
                 
-                // Show error state
+                // Show error state for all counters
                 document.getElementById('txnCount').textContent = 'Error';
-                document.getElementById('totalAmount').textContent = 'Error';
+                document.getElementById('donationsAmount').textContent = 'Error';
+                document.getElementById('donationsCount').textContent = 'Error';
+                document.getElementById('expensesAmount').textContent = 'Error';
+                document.getElementById('expensesCount').textContent = 'Error';
             }
         }
 
