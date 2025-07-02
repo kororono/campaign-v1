@@ -75,12 +75,10 @@
                     </blockquote>
                 </div>
                 <div class="hidden md:block">
-                    <img src="https://raw.githubusercontent.com/kororono/campaign-v1/main/assets/images/headshot.webp?v=2" 
+                    <img src="assets/images/headshot.webp" 
                          alt="Candidate Portrait" 
                          class="h-full w-full object-cover"
-                         crossorigin="anonymous"
-                         loading="lazy"
-                         onerror="console.log('Image failed to load:', this.src); this.onerror=null; this.src='https://via.placeholder.com/600x600/006A4E/FFFFFF?text=Brandon+Rono';"
+                         onerror="console.log('Local image failed, trying fallback...'); this.onerror=null; this.src='https://raw.githubusercontent.com/kororono/campaign-v1/main/assets/images/headshot.webp';"
                          onload="console.log('✅ Image loaded successfully!')">
                 </div>
             </div>
