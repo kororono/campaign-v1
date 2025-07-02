@@ -1,502 +1,333 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Campaign Transparency</title>
-  <style>
-    /* CSS Reset */
-    body,
-    h1,
-    h2,
-    h3,
-    h4,
-    h5,
-    h6,
-    p,
-    ul,
-    ol,
-    li,
-    form,
-    input,
-    textarea,
-    button {
-      margin: 0;
-      padding: 0;
-      border: 0;
-      font-size: 100%;
-      font: inherit;
-      vertical-align: baseline;
-      box-sizing: border-box;
-    }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Campaign Transparency Initiative</title>
+    <!-- Tailwind CSS for modern, utility-first styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts for better typography -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet">
+    <style>
+        /* Custom styles to complement Tailwind and define our theme */
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8fafc; /* A light gray background for a clean look */
+        }
 
-    body {
-      font-family: sans-serif;
-      line-height: 1.6;
-      background: linear-gradient(to bottom, #006600, #FFFFFF);
-      color: #333;
-      overflow-x: hidden;
-    }
+        /* Kenyan Flag Inspired Color Palette */
+        :root {
+            --brand-black: #1a1a1a;
+            --brand-red: #B80000;
+            --brand-green: #006A4E;
+            --brand-white: #FFFFFF;
+        }
 
-    /* Kenyan Flag Colors */
-    :root {
-      --green: #006600;
-      --white: #FFFFFF;
-      --red: #BB0000;
-      --black: #000000;
-    }
+        /* Custom gradient for the hero section */
+        .hero-gradient {
+            background: linear-gradient(135deg, var(--brand-black) 0%, #333333 100%);
+        }
 
-    /* Layout */
-    .container {
-      max-width: 1200px;
-      margin: 20px auto;
-      padding: 20px;
-    }
+        /* A subtle pattern for the background to add texture */
+        .pattern-bg {
+            background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23e2e8f0' fill-opacity='0.4'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+        }
 
-    /* Hero Section */
-    .hero {
-      display: grid;
-      grid-template-columns: 40% 60%;
-      gap: 20px;
-      align-items: center;
-      padding: 20px;
-      background-color: rgba(255, 255, 255, 0.8);
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-      border-bottom: 5px solid var(--red);
-    }
+        /* Animation for the counters */
+        .countup {
+            transition: all 0.3s ease-in-out;
+        }
 
-    .hero-image {
-      width: 100%;
-      height: auto;
-      aspect-ratio: 16 / 9;
-      object-fit: cover;
-    }
+        /* Custom styles for form inputs for a cleaner look */
+        .form-input {
+            background-color: #f1f5f9;
+            border-color: #cbd5e1;
+        }
+        .form-input:focus {
+            outline: none;
+            border-color: var(--brand-green);
+            box-shadow: 0 0 0 2px rgba(0, 106, 78, 0.3);
+        }
 
-    .hero-content {
-      padding: 20px;
-    }
+        /* Loading spinner animation */
+        .loading-spinner {
+            border: 4px solid rgba(255, 255, 255, 0.2);
+            border-top-color: var(--brand-green);
+            animation: spin 1s linear infinite;
+        }
 
-    .hero-content h1 {
-      font-size: 2.5em;
-      color: var(--green);
-      margin-bottom: 10px;
-    }
-
-    .hero-content p {
-      font-size: 1.2em;
-      color: var(--black);
-      font-style: italic;
-    }
-
-    /* Donation Tracker */
-    .donation-tracker {
-      display: flex;
-      justify-content: space-around;
-      padding: 30px;
-      background-color: var(--black);
-      color: var(--white);
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-    }
-
-    .donation-counter {
-      text-align: center;
-    }
-
-    .donation-counter h2 {
-      font-size: 1.8em;
-      margin-bottom: 10px;
-    }
-
-    .donation-counter.in h2 {
-      color: var(--green);
-      text-shadow: 0 0 10px var(--green);
-    }
-
-    .donation-counter.out h2 {
-      color: var(--red);
-      text-shadow: 0 0 10px var(--red);
-    }
-
-    .donation-amount {
-      font-size: 2em;
-      font-weight: bold;
-    }
-
-    /* Verify Donation */
-    .verify-donation {
-      padding: 30px;
-      background-color: rgba(255, 255, 255, 0.8);
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-      margin-top: 20px;
-    }
-
-    .verify-donation h2 {
-      font-size: 2em;
-      color: var(--green);
-      margin-bottom: 20px;
-      text-align: center;
-    }
-
-    .verify-form {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-      gap: 15px;
-    }
-
-    .form-group {
-      display: flex;
-      flex-direction: column;
-    }
-
-    .form-group label {
-      margin-bottom: 5px;
-      color: var(--black);
-    }
-
-    .form-group input {
-      padding: 10px;
-      border: 1px solid #ccc;
-      border-radius: 5px;
-    }
-
-    .verify-button {
-      padding: 12px 20px;
-      background-color: var(--green);
-      color: var(--white);
-      border: none;
-      border-radius: 5px;
-      cursor: pointer;
-      transition: background-color 0.3s ease;
-    }
-
-    .verify-button:hover {
-      background-color: darken(var(--green), 10%);
-    }
-
-    .result-area {
-      margin-top: 20px;
-      text-align: center;
-      font-size: 1.2em;
-    }
-
-    .result-area.verified {
-      color: var(--green);
-    }
-
-    .result-area.not-found {
-      color: var(--red);
-    }
-
-    /* Footer */
-    footer {
-      text-align: center;
-      padding: 20px;
-      background-color: var(--black);
-      color: var(--white);
-      margin-top: 30px;
-    }
-
-    footer p {
-      font-style: italic;
-      margin-bottom: 10px;
-    }
-
-    footer img {
-      width: 30px;
-      margin-bottom: 10px;
-    }
-
-    /* Responsive Design */
-    @media (max-width: 768px) {
-      .hero {
-        grid-template-columns: 1fr;
-        text-align: center;
-      }
-
-      .hero-image {
-        width: 80%;
-        margin: 0 auto;
-      }
-
-      .donation-tracker {
-        flex-direction: column;
-        align-items: center;
-        gap: 20px;
-      }
-
-      .verify-form {
-        grid-template-columns: 1fr;
-      }
-    }
-
-    /* Loading Spinner */
-    .loading-spinner {
-      border: 5px solid rgba(0, 0, 0, 0.1);
-      border-top: 5px solid var(--green);
-      border-radius: 50%;
-      width: 50px;
-      height: 50px;
-      animation: spin 1s linear infinite;
-      margin: 20px auto;
-    }
-
-    @keyframes spin {
-      0% {
-        transform: rotate(0deg);
-      }
-
-      100% {
-        transform: rotate(360deg);
-      }
-    }
-
-    /* Utility Classes */
-    .mt-20 {
-      margin-top: 20px;
-    }
-
-    .text-center {
-      text-align: center;
-    }
-
-    /* CountUp.js Styles (if needed) */
-    .countup {
-      display: inline-block;
-    }
-  </style>
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+    </style>
 </head>
+<body class="pattern-bg">
 
-<body>
-  <div class="container">
-    <!-- Hero Section -->
-    <section class="hero">
-      <img src="https://via.placeholder.com/640x360" alt="Candidate Image" class="hero-image">
-      <!-- Replace with actual image URL -->
-      <div class="hero-content">
-        <h1>Candidate Name</h1>
-        <p>Running for Position</p>
-        <blockquote cite="Unknown">
-          “If you cannot trust your leader with ten shillings, you should not trust them with billions. Every coin, every
-          transaction, every decision – transparent and accountable.”
-        </blockquote>
-      </div>
-    </section>
+    <div class="container mx-auto p-4 md:p-8 max-w-6xl">
 
-    <!-- Live Donation Tracker -->
-    <section class="donation-tracker">
-      <div class="donation-counter in">
-        <h2>Total Donations (IN)</h2>
-        <div class="donation-amount" id="total-donations">
-          <span class="countup">0</span>
-        </div>
-      </div>
-      <div class="donation-counter out">
-        <h2>Total Spent (OUT)</h2>
-        <div class="donation-amount" id="total-spent">
-          <span class="countup">0</span>
-        </div>
-      </div>
-    </section>
+        <!-- Header / Hero Section -->
+        <header class="hero-gradient text-white rounded-2xl shadow-2xl overflow-hidden mb-12">
+            <div class="grid md:grid-cols-2 items-center">
+                <div class="p-8 md:p-12">
+                    <h1 class="text-4xl md:text-5xl font-black leading-tight mb-4">Transparency in Action</h1>
+                    <p class="text-lg text-gray-300 mb-6">A New Standard for Political Accountability.</p>
+                    <blockquote class="border-l-4 border-brand-green pl-4 italic text-gray-200">
+                        “If you cannot trust your leader with ten shillings, you should not trust them with billions. Every coin, every transaction, every decision – transparent and accountable.”
+                    </blockquote>
+                </div>
+                <div class="hidden md:block">
+                    <img src="https://placehold.co/600x600/006A4E/FFFFFF?text=Candidate" alt="Candidate Portrait" class="h-full w-full object-cover">
+                </div>
+            </div>
+        </header>
 
-    <!-- Verify Your Donation -->
-    <section class="verify-donation">
-      <h2 class="text-center">Verify Your Donation</h2>
-      <form class="verify-form">
-        <div class="form-group">
-          <label for="date">Date:</label>
-          <input type="date" id="date" name="date">
-        </div>
-        <div class="form-group">
-          <label for="time">Time (±1 hour):</label>
-          <input type="time" id="time" name="time">
-        </div>
-        <div class="form-group">
-          <label for="amount">Amount (KSh):</label>
-          <input type="number" id="amount" name="amount">
-        </div>
-        <button type="button" class="verify-button" onclick="verifyDonation()">Verify</button>
-      </form>
-      <div class="result-area mt-20" id="verification-result">
-        <!-- Result will be displayed here -->
-      </div>
-    </section>
+        <!-- Live Donation Tracker -->
+        <section class="mb-12">
+            <div class="grid md:grid-cols-3 gap-4 md:gap-8 text-center">
+                <!-- Total Donations (IN) -->
+                <div class="bg-white p-6 rounded-2xl shadow-lg border-t-4 border-brand-green">
+                    <h2 class="text-sm font-semibold text-gray-500 uppercase tracking-wider">Total Donations (IN)</h2>
+                    <div class="text-4xl md:text-5xl font-bold text-brand-green my-2">
+                        KSh <span id="total-donations" class="countup">0</span>
+                    </div>
+                    <p class="text-gray-400 text-xs">Live updates every 30 seconds.</p>
+                </div>
 
-    <!-- Footer -->
-    <footer>
-      <p>“Every shilling accounted for, every transaction on the blockchain.”</p>
-      <img src="https://upload.wikimedia.org/wikipedia/commons/4/45/Flag_of_Kenya.svg" alt="Kenyan Flag">
-      <!-- Replace with local Kenyan flag image -->
-      <p>Powered by Blockchain Technology</p>
-    </footer>
-  </div>
+                <!-- Net Balance -->
+                <div class="bg-brand-black text-white p-6 rounded-2xl shadow-lg order-first md:order-none">
+                     <h2 class="text-sm font-semibold text-gray-400 uppercase tracking-wider">Campaign Balance</h2>
+                    <div class="text-4xl md:text-5xl font-bold my-2">
+                        KSh <span id="net-balance" class="countup">0</span>
+                    </div>
+                     <p class="text-gray-500 text-xs">IN - OUT = BALANCE</p>
+                </div>
 
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/countup.js/2.0.4/countUp.min.js"></script>
-  <script>
-    // Function to fetch data from Google Sheets API
-    async function fetchData() {
-      const spreadsheetId = '14_8XqIiW8odyiGAE3Yq-iVs8Z90thRykLISaEhenwZw'; // Replace with your actual spreadsheet ID
-      const url = `https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}/values:batchGet?ranges=Sheet1&majorDimension=ROWS&valueRenderOption=FORMATTED_VALUE&key=YOUR_API_KEY`; // Replace YOUR_API_KEY with your actual Google Sheets API key
+                <!-- Total Spent (OUT) -->
+                <div class="bg-white p-6 rounded-2xl shadow-lg border-t-4 border-brand-red">
+                    <h2 class="text-sm font-semibold text-gray-500 uppercase tracking-wider">Total Spent (OUT)</h2>
+                    <div class="text-4xl md:text-5xl font-bold text-brand-red my-2">
+                        KSh <span id="total-spent" class="countup">0</span>
+                    </div>
+                    <p class="text-gray-400 text-xs">All expenditures publicly recorded.</p>
+                </div>
+            </div>
+        </section>
 
-      try {
-        const response = await fetch(url);
-        const data = await response.json();
+        <!-- Verify Your Donation Section -->
+        <section class="bg-white p-8 rounded-2xl shadow-xl">
+            <div class="text-center mb-8">
+                <h2 class="text-3xl font-bold text-brand-black">Verify Your Contribution</h2>
+                <p class="text-gray-600 mt-2">Check the status of your donation by entering the details below.</p>
+            </div>
 
-        if (data && data.valueRanges && data.valueRanges.length > 0) {
-          const values = data.valueRanges[0].values;
-          return processData(values);
-        } else {
-          console.error('Error: Unable to fetch data from Google Sheets.');
-          return {
-            totalIn: 0,
-            totalOut: 0,
-            transactions: []
-          };
+            <form id="verify-form" class="max-w-xl mx-auto grid sm:grid-cols-3 gap-4 items-end">
+                <div class="form-group">
+                    <label for="date" class="block text-sm font-medium text-gray-700 mb-1">Date</label>
+                    <input type="date" id="date" name="date" class="w-full p-3 rounded-lg form-input border transition">
+                </div>
+                <div class="form-group">
+                    <label for="time" class="block text-sm font-medium text-gray-700 mb-1">Time (approx.)</label>
+                    <input type="time" id="time" name="time" class="w-full p-3 rounded-lg form-input border transition">
+                </div>
+                <div class="form-group">
+                    <label for="amount" class="block text-sm font-medium text-gray-700 mb-1">Amount (KSh)</label>
+                    <input type="number" id="amount" name="amount" placeholder="e.g., 1000" class="w-full p-3 rounded-lg form-input border transition">
+                </div>
+                <button type="submit" class="sm:col-span-3 w-full bg-brand-green text-white font-bold p-4 rounded-lg shadow-md hover:bg-green-700 transition-all duration-300 ease-in-out transform hover:scale-105">
+                    Verify Now
+                </button>
+            </form>
+
+            <div id="verification-result" class="mt-8 text-center min-h-[80px]">
+                <!-- Result will be displayed here -->
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="text-center mt-12 py-6 border-t border-gray-200">
+             <img src="https://upload.wikimedia.org/wikipedia/commons/4/45/Flag_of_Kenya.svg" alt="Kenyan Flag" class="h-8 mx-auto mb-4">
+            <p class="text-gray-500 text-sm">“Every shilling accounted for, every transaction verifiable.”</p>
+            <p class="text-gray-400 text-xs mt-2">Powered by Transparency & Accountability</p>
+        </footer>
+    </div>
+
+    <!-- CountUp.js for animating numbers -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/countup.js/2.0.8/countUp.min.js"></script>
+    <script>
+        // --- MOCK DATA & API SIMULATION ---
+        // In a real application, this data would come from a secure backend API, not be stored client-side.
+        // This is for demonstration purposes to make the page interactive.
+        const mockTransactions = [
+            { date: '2025-07-01', time: '09:30', amount: '5000', direction: 'IN', onchain: 'TRUE' },
+            { date: '2025-07-01', time: '14:00', amount: '1200', direction: 'OUT', onchain: 'TRUE' },
+            { date: '2025-07-02', time: '11:15', amount: '100', direction: 'IN', onchain: 'TRUE' },
+            { date: '2025-07-02', time: '18:45', amount: '7500', direction: 'IN', onchain: 'FALSE' },
+            { date: '2025-07-03', time: '16:05', amount: '3000', direction: 'OUT', onchain: 'TRUE' },
+        ];
+
+        /**
+         * Simulates fetching data from an API (like Google Sheets).
+         * @returns {Promise<object>} A promise that resolves with totals and transactions.
+         */
+        async function fetchData() {
+            console.log("Fetching mock data...");
+            // Simulate network delay
+            await new Promise(resolve => setTimeout(resolve, 500)); 
+            
+            // This is where you would have your actual fetch call to the Google Sheets API
+            // const response = await fetch(YOUR_API_URL);
+            // const data = await response.json();
+            // return processData(data.valueRanges[0].values);
+
+            return processData(mockTransactions);
         }
-      } catch (error) {
-        console.error('Error fetching data:', error);
-        return {
-          totalIn: 0,
-          totalOut: 0,
-          transactions: []
-        };
-      }
-    }
 
-    // Function to process the fetched data
-    function processData(data) {
-      let totalIn = 0;
-      let totalOut = 0;
-      const transactions = [];
+        /**
+         * Processes the raw transaction data to calculate totals.
+         * @param {Array<object>} transactions - The array of transaction objects.
+         * @returns {object} An object containing totalIn, totalOut, and the original transactions.
+         */
+        function processData(transactions) {
+            let totalIn = 0;
+            let totalOut = 0;
 
-      // Assuming the first row is the header row
-      const headers = data[0];
+            transactions.forEach(transaction => {
+                const amount = parseFloat(transaction.amount);
+                if (isNaN(amount)) return;
 
-      for (let i = 1; i < data.length; i++) {
-        const row = data[i];
-        const transaction = {};
+                if (transaction.direction === 'IN') {
+                    totalIn += amount;
+                } else if (transaction.direction === 'OUT') {
+                    totalOut += amount;
+                }
+            });
 
-        for (let j = 0; j < headers.length; j++) {
-          transaction[headers[j].toLowerCase()] = row[j];
+            return { totalIn, totalOut, transactions };
         }
 
-        if (transaction.direction === 'IN') {
-          totalIn += parseFloat(transaction.amount);
-        } else if (transaction.direction === 'OUT') {
-          totalOut += parseFloat(transaction.amount);
+        // --- UI & ANIMATION LOGIC ---
+
+        let totalDonationsAnim, totalSpentAnim, netBalanceAnim;
+
+        /**
+         * Initializes and starts the counter animations.
+         * @param {number} totalIn - The total donations received.
+         * @param {number} totalOut - The total amount spent.
+         */
+        function animateCounters(totalIn, totalOut) {
+            const options = {
+                duration: 2.5,
+                separator: ',',
+                decimalPlaces: 2,
+            };
+
+            const totalDonationsElem = document.getElementById('total-donations');
+            const totalSpentElem = document.getElementById('total-spent');
+            const netBalanceElem = document.getElementById('net-balance');
+            const netBalance = totalIn - totalOut;
+
+            // Initialize or update the CountUp instances
+            if (!totalDonationsAnim) {
+                totalDonationsAnim = new CountUp(totalDonationsElem, totalIn, options);
+                totalSpentAnim = new CountUp(totalSpentElem, totalOut, options);
+                netBalanceAnim = new CountUp(netBalanceElem, netBalance, options);
+                totalDonationsAnim.start();
+                totalSpentAnim.start();
+                netBalanceAnim.start();
+            } else {
+                totalDonationsAnim.update(totalIn);
+                totalSpentAnim.update(totalOut);
+                netBalanceAnim.update(netBalance);
+            }
         }
 
-        transactions.push(transaction);
-      }
+        /**
+         * Handles the donation verification form submission.
+         * @param {Event} event - The form submission event.
+         */
+        async function verifyDonation(event) {
+            event.preventDefault(); // Prevent page reload
+            const date = document.getElementById('date').value;
+            const time = document.getElementById('time').value;
+            const amount = document.getElementById('amount').value;
+            const resultArea = document.getElementById('verification-result');
 
-      return {
-        totalIn,
-        totalOut,
-        transactions
-      };
-    }
+            if (!date || !time || !amount) {
+                resultArea.innerHTML = `<p class="text-yellow-600 font-semibold">Please fill in all fields to verify.</p>`;
+                return;
+            }
 
-    // Function to animate the counters
-    function animateCounters(totalIn, totalOut) {
-      const options = {
-        duration: 2,
-        easing: 'easeOutExpo',
-        separator: ',',
-      };
+            // Show a loading spinner
+            resultArea.innerHTML = `<div class="loading-spinner h-12 w-12 mx-auto border-gray-300"></div>`;
 
-      const totalDonationsElem = document.getElementById('total-donations');
-      const totalSpentElem = document.getElementById('total-spent');
+            const { transactions } = await fetchData();
+            
+            const matchedTransaction = transactions.find(transaction => {
+                // Simple matching for demonstration. Real-world logic might be more complex.
+                const isDateMatch = transaction.date === date;
+                const isAmountMatch = parseFloat(transaction.amount) === parseFloat(amount);
+                
+                // Time matching within a +/- 1 hour window
+                const inputTime = new Date(`1970-01-01T${time}:00`);
+                const transactionTime = new Date(`1970-01-01T${transaction.time}:00`);
+                const timeDiffHours = Math.abs(inputTime - transactionTime) / 3600000;
+                const isTimeMatch = timeDiffHours <= 1;
 
-      const countUpIn = new CountUp(totalDonationsElem.querySelector('.countup'), 0, totalIn, 2, options.duration, options);
-      const countUpOut = new CountUp(totalSpentElem.querySelector('.countup'), 0, totalOut, 2, options.duration, options);
+                return isDateMatch && isAmountMatch && isTimeMatch;
+            });
 
-      if (!countUpIn.error) {
-        countUpIn.start();
-      } else {
-        console.error(countUpIn.error);
-        totalDonationsElem.querySelector('.countup').textContent = totalIn.toLocaleString(); // Fallback
-      }
+            // Display result after a short delay for effect
+            setTimeout(() => {
+                if (matchedTransaction) {
+                    if (matchedTransaction.onchain === 'TRUE') {
+                        resultArea.innerHTML = `
+                            <div class="bg-green-100 text-green-800 p-4 rounded-lg">
+                                <p class="font-bold text-lg">✅ Verified on Blockchain</p>
+                                <p class="text-sm mt-1">A matching transaction was found and confirmed.</p>
+                            </div>
+                        `;
+                    } else {
+                         resultArea.innerHTML = `
+                            <div class="bg-yellow-100 text-yellow-800 p-4 rounded-lg">
+                                <p class="font-bold text-lg">⚠️ Transaction Found, Not On-Chain</p>
+                                <p class="text-sm mt-1">A matching transaction was found but is still pending blockchain verification.</p>
+                            </div>
+                        `;
+                    }
+                } else {
+                    resultArea.innerHTML = `
+                        <div class="bg-red-100 text-red-800 p-4 rounded-lg">
+                            <p class="font-bold text-lg">❌ Transaction Not Found</p>
+                            <p class="text-sm mt-1">We could not find a matching transaction. Please double-check the details.</p>
+                        </div>
+                    `;
+                }
+            }, 1000); // 1-second delay
+        }
 
-      if (!countUpOut.error) {
-        countUpOut.start();
-      } else {
-        console.error(countUpOut.error);
-        totalSpentElem.querySelector('.countup').textContent = totalOut.toLocaleString(); // Fallback
-      }
-    }
+        /**
+         * Function to auto-refresh data periodically.
+         */
+        async function autoRefreshData() {
+            const { totalIn, totalOut } = await fetchData();
+            animateCounters(totalIn, totalOut);
+        }
 
-    // Function to verify a donation
-    function verifyDonation() {
-      const date = document.getElementById('date').value;
-      const time = document.getElementById('time').value;
-      const amount = document.getElementById('amount').value;
-      const verificationResultElem = document.getElementById('verification-result');
+        // --- INITIALIZATION ---
+        document.addEventListener('DOMContentLoaded', () => {
+            const verifyForm = document.getElementById('verify-form');
+            verifyForm.addEventListener('submit', verifyDonation);
 
-      // Fetch data and then verify
-      fetchData().then(({
-        transactions
-      }) => {
-        const matchedTransaction = transactions.find(transaction => {
-          const transactionDate = transaction.date;
-          const transactionTime = transaction.time;
-          const transactionAmount = transaction.amount;
+            // Initial data load and counter animation
+            autoRefreshData();
 
-          // Date match
-          if (transactionDate !== date) {
-            return false;
-          }
-
-          // Amount match
-          if (parseFloat(transactionAmount) !== parseFloat(amount)) {
-            return false;
-          }
-
-          // Time match (+/- 1 hour)
-          const inputTime = new Date(`1970-01-01T${time}Z`);
-          const transactionTimeDate = new Date(`1970-01-01T${transactionTime}Z`);
-          const timeDiff = Math.abs(inputTime - transactionTimeDate) / 3600000; // Difference in hours
-
-          if (timeDiff > 1) {
-            return false;
-          }
-
-          return true;
+            // Set interval for auto-refresh (every 30 seconds)
+            setInterval(autoRefreshData, 30000);
         });
-
-        if (matchedTransaction && matchedTransaction.onchain === 'TRUE') {
-          verificationResultElem.textContent = '✅ Verified on Blockchain';
-          verificationResultElem.classList.remove('not-found');
-          verificationResultElem.classList.add('verified');
-          verificationResultElem.innerHTML += `<br>Transaction Details: ${JSON.stringify(matchedTransaction)}`;
-        } else {
-          verificationResultElem.textContent = '❌ Not Found';
-          verificationResultElem.classList.remove('verified');
-          verificationResultElem.classList.add('not-found');
-        }
-      });
-    }
-
-    // Function to auto-refresh data every 30 seconds
-    function autoRefreshData() {
-      fetchData().then(({
-        totalIn,
-        totalOut
-      }) => {
-        animateCounters(totalIn, totalOut);
-      });
-    }
-
-    // Initial data load and counter animation
-    fetchData().then(({
-      totalIn,
-      totalOut
-    }) => {
-      animateCounters(totalIn, totalOut);
-    });
-
-    // Set interval for auto-refresh
-    setInterval(autoRefreshData, 30000);
-  </script>
+    </script>
 </body>
-
 </html>
